@@ -4,7 +4,7 @@ build: main.o
 	ld -o main $^
 
 clean:
-	rm -rf *.o && rm -rf main
+	rm -rf *.o && rm -rf main && rm -rf core
 
 run:
 	make build

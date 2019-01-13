@@ -4,13 +4,13 @@ build: main.o
 	ld -o main $^
 
 clean:
-	rm -rf *.o && rm -rf main && rm -rf core
+	rm -f *.o && rm -f main && rm -f core
 
 run:
 	make build
 	./main
 
-.PHONY: build clean
+.PHONY: build clean run
 
 %.o: %.s
 	as $(FLAGS) -o $@ $^

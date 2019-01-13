@@ -39,9 +39,17 @@ closing:
 	# is stack empty?
 	test %r10, %r10
 	jz printNo
-	# pop to junk
+	# pop to r9
 	pop %r9
 	dec %r10
+	# check if the parenthese correspond
+	xor %r12, %r12
+	xor %r13, %r13
+	movb (%r9), %r12b
+	movb (%r8), %r13b
+	sub %r12, %r13
+	cmp $2, %r13
+	jg printNo
 	# move to next letter
 	inc %r8
 	jmp loop
@@ -79,12 +87,20 @@ loop:
 	test %al, %al
 	jz check
 
-	# if current letter = (
-	cmp $40, %rax
+	# Check opening
+	cmp $40, %rax # (
+	je opening
+	cmp $91, %rax # [
+	je opening
+	cmp $123, %rax # {
 	je opening
 
-	# if current letter = )
-	cmp $41, %rax
+	# Check closing
+	cmp $41, %rax # )
+	je closing
+	cmp $93, %rax # ]
+	je closing
+	cmp $125, %rax # }
 	je closing
 
 	# move to the next letter

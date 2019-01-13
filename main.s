@@ -4,10 +4,10 @@
 .data
 
 yes:
-	.ascii "YES\n"
+	.string "YES\n"
 
 no:
-	.ascii "NO\n"
+	.string "NO\n"
 
 #################
 # TEXT          #
@@ -19,28 +19,37 @@ no:
 
 printYes:
 	mov $yes, %rsi
+	mov $5, %rdx
 	jmp exit
 
 printNo:
 	mov $no, %rsi
+	mov $4, %rdx
 	jmp exit
 
 opening:
 	# update stack
-	# push %r8
+	push %r8
+	inc %r10
 	# move to next letter
 	inc %r8
 	jmp loop
 
 closing:
-	# check stack'sum
-	cmp %rbp, %rsp
-	je printNo
+	# is stack empty?
+	test %r10, %r10
+	jz printNo
 	# pop to junk
 	pop %r9
+	dec %r10
 	# move to next letter
 	inc %r8
 	jmp loop
+
+check:
+	test %r10, %r10
+	jz printYes
+	jmp printNo
 
 
 # --------------
@@ -48,14 +57,16 @@ closing:
 
 .global _start
 _start:
-	# save parameter in r8
+	# save text in r8
 	pop %rdx
 	pop %rdx
 	xor %r8, %r8
 	pop %r8
 
 	# empty stack
-	mov %rbp, %rsp
+	movq %rsp, %rbp
+	# use r10 as stack length
+	xor %r10, %r10
 
 # --------------
 # LOGIC
@@ -66,7 +77,7 @@ loop:
 
 	# check if it's the end
 	test %al, %al
-	jz printYes
+	jz check
 
 	# if current letter = (
 	cmp $40, %rax
@@ -76,16 +87,18 @@ loop:
 	cmp $41, %rax
 	je closing
 
+	# move to the next letter
+	inc %r8
+
 	# loop
 	jmp loop
 
 
 exit:
 	# print yes or no"
-	# RSI MUST BE INIT
+	# RSI AND RDX MUST BE INIT
 	mov $1, %rax
 	xor %rdi, %rdi
-	mov $1, %rdx
 	syscall
 
 	# exit(0)

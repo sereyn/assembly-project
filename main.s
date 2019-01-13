@@ -17,23 +17,31 @@ no:
 # --------------
 # SUBFUNCTIONS
 
-# on opening/closing parenthese
+printYes:
+	mov $yes, %rsi
+	jmp exit
+
+printNo:
+	mov $no, %rsi
+	jmp exit
+
 opening:
-	inc %r9
-	inc %r8
-	jmp loop
-closing:
-	inc %r10
+	# update stack
+	# push %r8
+	# move to next letter
 	inc %r8
 	jmp loop
 
-# set message
-setyes:
-	mov $yes, %rsi
-	jmp exit
-setno:
-	mov $no, %rsi
-	jmp exit
+closing:
+	# check stack'sum
+	cmp %rbp, %rsp
+	je printNo
+	# pop to junk
+	pop %r9
+	# move to next letter
+	inc %r8
+	jmp loop
+
 
 # --------------
 # ENTRY POINT (init)
@@ -46,10 +54,8 @@ _start:
 	xor %r8, %r8
 	pop %r8
 
-	# r9 is nbr of (
-	xor %r9, %r9
-	# r10 is nbr of )
-	xor %r10, %r10
+	# empty stack
+	mov %rbp, %rsp
 
 # --------------
 # LOGIC
@@ -60,7 +66,7 @@ loop:
 
 	# check if it's the end
 	test %al, %al
-	jz calc
+	jz printYes
 
 	# if current letter = (
 	cmp $40, %rax
@@ -70,19 +76,12 @@ loop:
 	cmp $41, %rax
 	je closing
 
-	# move to next letter
-	inc %r8
-
 	# loop
 	jmp loop
 
-calc:
-	cmp %r9, %r10
-	je setyes
-	jmp setno
 
 exit:
-	# print if "nb of (" = "nb of )"
+	# print yes or no"
 	# RSI MUST BE INIT
 	mov $1, %rax
 	xor %rdi, %rdi

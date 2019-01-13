@@ -1,3 +1,12 @@
+# pretty fixed registers
+# r10: stack length
+# r8: text to check
+
+# temporary used registers
+# r9
+# r12
+# r13
+
 #################
 # DATA          #
 #################
@@ -7,7 +16,10 @@ yes:
 	.string "YES\n"
 
 no:
-	.string "NO\n"
+	.string "ERROR: "
+
+parenthese:
+	.string ""
 
 #################
 # TEXT          #

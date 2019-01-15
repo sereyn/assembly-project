@@ -16,10 +16,13 @@ yes:
 	.string "YES\n"
 
 no:
-	.string "ERROR: "
+	.string "NO\n"
 
 parenthese:
 	.string ""
+
+argc:
+	.quad 0
 
 #################
 # TEXT          #
@@ -77,9 +80,10 @@ check:
 
 .global _start
 _start:
+	pop argc
+	pop %rdx
+
 	# save text in r8
-	pop %rdx
-	pop %rdx
 	xor %r8, %r8
 	pop %r8
 

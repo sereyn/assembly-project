@@ -1,0 +1,119 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[top=3cm, bottom=3cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{psfrag}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[french,vlined,boxed]{algorithm2e}
+
+\usepackage{listings} % permet de formatter les commandes linux
+
+\pagestyle{headings}
+
+\title{Rapport de project d'architecture des ordinateurs}
+\author{C. DEFRÉTIÈRE}
+\date{\today}
+
+\setcounter{secnumdepth}{3}
+
+
+\newcommand{\vide}{\emptyset}
+
+\newcommand{\entetealgo}[3]{%
+\vspace*{3mm}%
+\par\noindent\framebox[\textwidth]{{\bf Algorithme} #1}%
+\par\noindent\framebox[\textwidth][l]{{\bf Données :~~}%
+  \begin{minipage}[t]{11cm}%
+    #2%
+  \end{minipage}}%
+\par\noindent\framebox[\textwidth][l]{{\bf Résultat(s) :~~}%\hfill
+  \begin{minipage}[t]{11cm}%
+    #3%
+  \end{minipage}}%
+\par}
+
+\newcommand{\vers}{\leftarrow}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Dans le cadre de la licence d'informatique proposée par l'Université Jean-Monnet, l'architecture des ordinateurs est une unité d'enseignement proposé aux étudiants. Celle-ci permet de mieux comprendre les technologies utilisées actuellement, et de se forger une culture informatique plus solide. \\
+Nous allons, à travers ce document, découvrir l'implémentation faite par moi-même, d'un vérificateur de parenthèses dans une chaine de caractères, en langage assembleur.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Description du programme}
+Ce programme prend une chaine de caractère quelconque en argument, il vous suffira de taper, si votre exécutable se nomme 'main' par exemple:
+\begin{lstlisting}[language=bash]
+	./main 'ma chaine (de) c[a]racteres {(test)}'
+\end{lstlisting}
+afin de vérifier si la chaine est bien parenthésé.\\ \\
+Cette implémentation gère les types de parenthèses suivants:
+\begin{itemize}
+	\item[$\cdot$] $($ et $)$
+	\item[$\cdot$] $ \lbrace $ et $ \rbrace $
+	\item[$\cdot$] $ [ $ et $ ] $
+\end{itemize}
+
+\subsection{Une chaine bien parenthésé}
+Une chaine est dite 'bien parenthésé', si pour un type de parenthèse, il y a autant de parenthèse ouvrante que fermante.\\
+De plus, pour éviter les chaines comme ')test(', on vérifiera également que pour tout préfixe de la chaine, toujours pour un type de parenthèse donné, il y a plus de parenthèse ouvrante que fermante.
+
+\subsection{Compilation et exécution}
+Avant de tenter toute commande, veuillez décompresser le fichier tar.
+Tout se passera désormais dans le dossier obtenu.\\
+Pour compiler ce projet, aucun soucis, utilisez simplement l'utilitaire $make$ à la racine du dossier.\\
+Les options disponible pour $make$ sont:
+\begin{enumerate}
+	\item[$\cdot$] $clean$
+	\item[$\cdot$] $build$
+	\item[$\cdot$] $run$
+\end{enumerate}
+
+\newpage
+
+\section{Algorithme}
+
+\subsection{Pseudo-code}
+\entetealgo{\textsf{Vérifier\_parenthèses}$({\cal S})$}
+{une chaine de caractères ${\cal S}$}
+{un affichage dans le terminal disant si oui ou non la chaine est bien parenthésé}
+\begin{algorithm}[H]
+\Deb{
+chaine $\vers$ S\;
+vider(pile)\;
+\Tq{non\_vide(chaine)}{
+c $\vers$ retirer\_premier\_caractère(S)\;
+\Si{est\_ouvrante(c)}{
+	empiler(c)\;
+}
+\Si{est\_fermante(c)}{
+	\Si{est\_vide(pile)}{
+		afficher("mal parenthésé")\;
+		arrêt\_programme();
+	}
+	p $\vers$ dépiler(c)\;
+   	écart $\vers$ écart\_ascii(p, c)\;
+   	\Si{écart > 2}{
+   		afficher("mal parenthésé")\;
+   		arrêt\_programme()\;
+   	}
+}
+}
+\lSi{est\_vide(pile)}{afficher("bien parenthésé")}
+\lSi{n'est\_pas\_vide(pile)}{afficher("mal parenthésé")}
+
+}      
+\end{algorithm}
+
+
+\end{document}
